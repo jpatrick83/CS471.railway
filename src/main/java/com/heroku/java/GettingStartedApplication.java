@@ -37,6 +37,7 @@ public class GettingStartedApplication {
         return "dbinput";
     }
 
+    @GetMapping("/database")
     String database(Map<String, Object> model) {
 
         System.out.println("Database endpoint accessed by John Patrick");
@@ -45,13 +46,11 @@ public class GettingStartedApplication {
 
             Statement statement = connection.createStatement();
 
-            // Ensure table exists
             statement.executeUpdate(
                     "CREATE TABLE IF NOT EXISTS table_timestamp_and_random_string (" +
                             "tick timestamp, random_string varchar(50))"
             );
 
-            // ONLY read existing records
             ResultSet resultSet = statement.executeQuery(
                     "SELECT tick, random_string FROM table_timestamp_and_random_string " +
                             "ORDER BY tick DESC"
