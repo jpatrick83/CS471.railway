@@ -5,6 +5,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -28,6 +30,11 @@ public class GettingStartedApplication {
     @GetMapping("/")
     public String index() {
         return "index";
+    }
+
+    @GetMapping("/dbinput")
+    public String dbInputForm() {
+        return "dbinput";
     }
 
     @GetMapping("/database")
@@ -72,6 +79,36 @@ public class GettingStartedApplication {
         } catch (Throwable t) {
             model.put("message", t.getMessage());
             return "error";
+        }
+    }
+
+    @PostMapping("/dbinput")
+    public String handleDbInput(
+            @RequestParam("userString") String userString,
+            Map<String, Object> model) {
+
+        try (Connection connection = dataSource.getConnection()) {
+
+            var statement = connection.createStatement();
+
+            // Ensure table exists
+            statement.executeUpdate(
+                    "CREATE TABLE IF NOT EXISTS table_timestamp_and_random_string (" +
+                            "tick timestamp, random_string varchar(50))"
+            );
+
+            // Insert user-provided string
+            statement.executeUpdate(
+                    "INSERT INTO table_timestamp_and_random_string VALUES (now(), '" +
+                            userString + "')"
+            );
+
+            model.put("message", "Successfully inserted: " + userString);
+            return "dbinput";
+
+        } catch (Exception e) {
+            model.put("message", "Error: " + e.getMessage());
+            return "dbinput";
         }
     }
 

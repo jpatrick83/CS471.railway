@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Database Input</title>
+</head>
+<body>
+
+<h2>Enter a String to Store in the Database</h2>
+
+<form method="post" action="/dbinput">
+    <input type="text" name="userString" required />
+    <button type="submit">Submit</button>
+</form>
+
+<p th:if="${message}" th:text="${message}"></p>
+
+<p>
+    <a href="/database">View Database Records</a>
+</p>
+
+</body>
+</html>
