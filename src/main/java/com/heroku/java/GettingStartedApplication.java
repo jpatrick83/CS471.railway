@@ -32,6 +32,9 @@ public class GettingStartedApplication {
 
     @GetMapping("/database")
     String database(Map<String, Object> model) {
+
+
+        System.out.println("Database endpoint accessed by John Patrick");
         try (Connection connection = dataSource.getConnection()) {
 
             Statement statement = connection.createStatement();
