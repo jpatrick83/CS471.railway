@@ -37,40 +37,35 @@ public class GettingStartedApplication {
         return "dbinput";
     }
 
-    @GetMapping("/database")
     String database(Map<String, Object> model) {
 
-
         System.out.println("Database endpoint accessed by John Patrick");
+
         try (Connection connection = dataSource.getConnection()) {
 
             Statement statement = connection.createStatement();
 
-            // Create table with timestamp and random string
+            // Ensure table exists
             statement.executeUpdate(
                     "CREATE TABLE IF NOT EXISTS table_timestamp_and_random_string (" +
-                            "tick timestamp, " +
-                            "random_string varchar(50))"
+                            "tick timestamp, random_string varchar(50))"
             );
 
-            // Insert current timestamp and random string
-            statement.executeUpdate(
-                    "INSERT INTO table_timestamp_and_random_string VALUES (now(), '" +
-                            getRandomString() + "')"
-            );
-
-            // Select all records
+            // ONLY read existing records
             ResultSet resultSet = statement.executeQuery(
-                    "SELECT tick, random_string FROM table_timestamp_and_random_string"
+                    "SELECT tick, random_string FROM table_timestamp_and_random_string " +
+                            "ORDER BY tick DESC"
             );
 
             ArrayList<String> output = new ArrayList<>();
 
             while (resultSet.next()) {
-                Timestamp timestamp = resultSet.getTimestamp("tick");
-                String randomString = resultSet.getString("random_string");
-
-                output.add("Read from DB: " + timestamp + " | Random String: " + randomString);
+                output.add(
+                        "Read from DB: " +
+                                resultSet.getTimestamp("tick") +
+                                " | Input String: " +
+                                resultSet.getString("random_string")
+                );
             }
 
             model.put("records", output);
